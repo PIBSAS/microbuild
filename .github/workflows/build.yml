@@ -42,19 +42,23 @@ jobs:
         cd ports/rp2
         make submodules
         make
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'  # Especifica la versión de Node.js
 
     - name: Find .uf2 file
       id: find_uf2
       run: |
         cd micropython/ports/rp2/build
-        # Suponiendo que el archivo .uf2 se llama "firmware.uf2"
         echo "uf2_file=$(find . -name '*.uf2')" >> $GITHUB_ENV
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v1.0
-        name: "MicroPython Release"
+        tag_name: ${{ github.ref }}  # Usa el tag del commit para la release
+        name: "MicroPython Release ${{ github.ref }}"  # Nombre dinámico
         draft: false
         prerelease: false
         files: ${{ env.uf2_file }}  # Añade el archivo .uf2 encontrado
