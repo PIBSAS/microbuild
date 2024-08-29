@@ -54,7 +54,10 @@ jobs:
           cd ..
           ./install.sh esp32s3
           echo "$HOME/esp/esp-idf/tools" >> $GITHUB_PATH  # Añadir herramientas ESP-IDF al PATH
-
+     
+      - name: Export ESP directory path
+        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_ENV
+        
   build_rp2040:
     runs-on: ubuntu-latest
     needs: setup  # Este trabajo depende del trabajo de configuración
@@ -84,6 +87,10 @@ jobs:
       - name: Checkout MicroPython
         run: git clone --recurse-submodules https://github.com/micropython/micropython.git
 
+      - name: Install Pico SDK dependencies
+        run: |
+          sudo apt-get install -y gcc-arm-none-eabi
+          
       - name: Build MicroPython for Pico W
         run: |
           cd micropython
