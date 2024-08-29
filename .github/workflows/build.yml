@@ -1,6 +1,8 @@
 name: Build MicroPython
+
 permissions:
   contents: write
+
 on:
   push:
     branches:
@@ -41,10 +43,12 @@ jobs:
         make submodules
         make
 
-    - name: Use Secret LINDA
-      run: echo "El valor de LINDA es $LINDA"
-      env:
-        LINDA: ${{ secrets.LINDA }}
+    - name: Find .uf2 file
+      id: find_uf2
+      run: |
+        cd micropython/ports/rp2/build
+        # Suponiendo que el archivo .uf2 se llama "firmware.uf2"
+        echo "uf2_file=$(find . -name '*.uf2')" >> $GITHUB_ENV
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -53,5 +57,6 @@ jobs:
         name: "MicroPython Release"
         draft: false
         prerelease: false
+        files: ${{ env.uf2_file }}  # Añade el archivo .uf2 encontrado
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
