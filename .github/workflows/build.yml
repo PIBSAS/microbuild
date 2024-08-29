@@ -21,6 +21,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libffi-dev git pkg-config \
             libssl-dev python3 python3-pip python3-venv
+        sudo apt-get install -y gcc-arm-none-eabi
+        
+    - name: Configure CMake
+      run: |
+        cd micropython/ports/rp2
+        mkdir build
+        cd build
+        cmake -DPICO_TOOLCHAIN_PATH=/usr/bin ..
 
     - name: Build MicroPython for RP2040
       run: |
