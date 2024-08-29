@@ -54,7 +54,9 @@ jobs:
         python3 idf_tools.py install cmake
         cd ..
         ./install.sh esp32s3
-        . ./export.sh
+        echo "source $PWD/export.sh" >> $GITHUB_ENV  # Exportar las variables de entorno del ESP-IDF
+        source $GITHUB_ENV  # Cargar las variables de entorno
+
         
     - name: Build MicroPython for RP2040
       run: |
@@ -77,11 +79,14 @@ jobs:
       run: |
         cd micropython
         make -C mpy-cross
+        export IDF_PATH="$HOME/esp/esp-idf"  # Ruta del ESP-IDF
+        export PATH="$IDF_PATH/tools:$PATH"  # Añadir herramientas ESP-IDF al PATH
         export IDF_TARGET=esp32s3
         cd ports/esp32/
         make submodules
         make BOARD=GENERIC_S3_N16R8 submodules
         make BOARD=GENERIC_S3_N16R8
+
         
     - name: Move .uf2 files to artifacts
       run: |
