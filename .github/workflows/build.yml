@@ -36,6 +36,26 @@ jobs:
       run: |
         cp -r ./custom_libs/* micropython/lib/
         
+    - name: Checkout ESP32-S3 Board Configurations
+      run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
+    
+    - name: Copy ESP32-S3 Board Configurations
+      run: |
+        cd ESP32-S3-WROOM-1-N16R8
+        cp -r GENERIC_S3_N16R8 ./../micropython/ports/esp32/boards/
+
+    - name: Setup ESP-IDF
+      run: |
+        cd
+        mkdir esp
+        cd esp
+        git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
+        cd esp-idf/tools
+        python3 idf_tools.py install cmake
+        cd ..
+        ./install.sh esp32s3
+        . ./export.sh
+        
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
@@ -52,26 +72,6 @@ jobs:
         make BOARD=RPI_PICO_W submodules  # Clonar submódulos específicos para Pico W
         make BOARD=RPI_PICO_W clean  # Limpiar compilaciones anteriores
         make BOARD=RPI_PICO_W  # Compilar para Pico W
-    
-    - name: Checkout ESP32-S3 Board Configurations
-      run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
-    - name: Copy ESP32-S3 Board Configurations
-      run: |
-        cd ESP32-S3-WROOM-1-N16R8
-        cp -r GENERIC_S3_N16R8 micropython/ports/esp32/boards
-  
-      
-    - name: Setup ESP-IDF
-      run: |
-        cd
-        mkdir esp
-        cd esp
-        git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
-        cd esp-idf/tools
-        python3 idf_tools.py install cmake
-        cd ..
-        ./install.sh esp32s3
-        . ./export.sh
 
     - name: Build MicroPython for ESP32-S3
       run: |
