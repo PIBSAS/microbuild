@@ -8,7 +8,7 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - 'v*'  # Este evento se activará cuando se haga push de un tag que comience con 'v'
   pull_request:
     branches:
       - main
@@ -43,24 +43,16 @@ jobs:
         make submodules
         make
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-
-    - name: Find .uf2 file
-      id: find_uf2
+    - name: Move .uf2 files to artifacts
       run: |
-        cd micropython/ports/rp2/build
-        echo "uf2_file=$(find . -name '*.uf2')" >> $GITHUB_ENV
+        mkdir -p ./artifacts
+        cp micropython/ports/rp2/build/*.uf2 ./artifacts/
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: marvinpinto/action-automatic-releases@latest
       with:
-        tag_name: ${{ github.ref }}  # Asegúrate de que esto sea un tag válido, como 'v1.0'
-        name: "MicroPython Release ${{ github.ref }}"  # Nombre dinámico
-        draft: false
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
-        files: ${{ env.uf2_file }}  # Añade el archivo .uf2 encontrado
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        automatic_release_tag: "v1.0"  # Asegúrate de que el tag esté definido
+        title: "Release for version v1.0"
+        files: ./artifacts/*
