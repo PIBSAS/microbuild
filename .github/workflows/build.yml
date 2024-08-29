@@ -42,11 +42,11 @@ jobs:
         cd ports/rp2
         make submodules
         make
-        
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'  # Especifica la versión de Node.js
+        node-version: '20'
 
     - name: Find .uf2 file
       id: find_uf2
@@ -57,7 +57,7 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}  # Usa el tag del commit para la release
+        tag_name: ${{ github.ref }}  # Asegúrate de que esto sea un tag válido, como 'v1.0'
         name: "MicroPython Release ${{ github.ref }}"  # Nombre dinámico
         draft: false
         prerelease: false
