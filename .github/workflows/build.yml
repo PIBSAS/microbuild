@@ -1,5 +1,6 @@
 name: Build MicroPython
-
+permissions:
+  contents: write
 on:
   push:
     branches:
@@ -53,4 +54,4 @@ jobs:
         draft: false
         prerelease: false
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
