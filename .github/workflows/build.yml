@@ -35,6 +35,7 @@ jobs:
     - name: Copy Libraries
       run: |
         cp -r ./custom_libs/* micropython/lib/
+        
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
@@ -54,9 +55,15 @@ jobs:
     
     - name: Checkout ESP32-S3 Board Configurations
       run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
+    - name: Copy ESP32-S3 Board Configurations
+      run: |
+        cd ESP32-S3-WROOM-1-N16R8
+        cp -r GENERIC_S3_N16R8 micropython/ports/esp32/boards
+  
       
     - name: Setup ESP-IDF
       run: |
+        cd
         mkdir esp
         cd esp
         git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
@@ -65,11 +72,6 @@ jobs:
         cd ..
         ./install.sh esp32s3
         . ./export.sh
-
-    - name: Copy ESP32-S3 Board Configurations
-      run: |
-        cd
-        cp -r ESP32-S3-WROOM-1-N16R8/GENERIC_S3_N16R8 micropython/ports/esp32/boards
 
     - name: Build MicroPython for ESP32-S3
       run: |
