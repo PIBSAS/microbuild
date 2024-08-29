@@ -27,14 +27,7 @@ jobs:
         sudo apt-get install -y build-essential libffi-dev git pkg-config \
             libssl-dev python3 python3-pip python3-venv
         sudo apt-get install -y gcc-arm-none-eabi
-        
-    - name: Configure CMake
-      run: |
-        cd micropython/ports/rp2
-        mkdir build
-        cd build
-        cmake -DPICO_TOOLCHAIN_PATH=/usr/bin ..
-
+    
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
@@ -42,11 +35,21 @@ jobs:
         cd ports/rp2
         make submodules
         make
+        
+    - name: Build MicroPython for Pico W
+      run: |
+        cd micropython
+        make -C mpy-cross
+        cd ports/rp2
+        make BOARD=RPI_PICO_W submodules  # Clonar submódulos específicos para Pico W
+        make BOARD=RPI_PICO_W clean  # Limpiar compilaciones anteriores
+        make BOARD=RPI_PICO_W  # Compilar para Pico W
 
     - name: Move .uf2 files to artifacts
       run: |
         mkdir -p ./artifacts
-        cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/
+        cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/RP2040.uf2
+        cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2  # Copiar firmware a artifacts
 
     - name: Generate Tag
       id: tag
