@@ -40,6 +40,11 @@ jobs:
         make submodules
         make
 
+    - name: Use Secret LINDA
+      run: echo "El valor de LINDA es $LINDA"
+      env:
+        LINDA: ${{ secrets.LINDA }}
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
