@@ -43,7 +43,7 @@ jobs:
         cd ESP32-S3-WROOM-1-N16R8
         cp -r GENERIC_S3_N16R8 ./../micropython/ports/esp32/boards/
 
-        - name: Setup ESP-IDF
+    - name: Setup ESP-IDF
       run: |
         cd
         mkdir esp
