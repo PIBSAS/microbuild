@@ -66,6 +66,10 @@ jobs:
       - name: Checkout MicroPython
         run: git clone --recurse-submodules https://github.com/micropython/micropython.git
 
+      - name: Install Pico SDK dependencies
+        run: |
+          sudo apt-get install -y gcc-arm-none-eabi
+          
       - name: Build MicroPython for RP2040
         run: |
           cd micropython
@@ -115,7 +119,7 @@ jobs:
 
       - name: Setup Python Environment for ESP-IDF
         run: |
-          cd esp
+          cd esp/esp-idf  # Asegurarse de estar en el directorio correcto
           python3 -m venv esp-idf-venv
           source esp-idf-venv/bin/activate
           pip install -r tools/requirements/requirements.core.txt
@@ -124,13 +128,13 @@ jobs:
         run: |
           cd micropython
           make -C mpy-cross
-          export IDF_PATH="$HOME/esp/esp-idf"  # Ruta del ESP-IDF
+          export IDF_PATH="$ESP_DIR/esp-idf"  # Ruta del ESP-IDF
           export IDF_TARGET=esp32s3
           cd ports/esp32/
           make submodules
           make BOARD=GENERIC_S3_N16R8 submodules
           make BOARD=GENERIC_S3_N16R8
-
+      
       - name: Move .uf2 files to artifacts
         run: |
           mkdir -p ./artifacts
