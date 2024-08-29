@@ -25,8 +25,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libffi-dev git pkg-config \
-            libssl-dev python3 python3-pip python3-venv
-        sudo apt-get install -y gcc-arm-none-eabi
+            libssl-dev python3 python3-pip python3-venv wget flex bison gperf \
+            ccache dfu-util libusb-1.0-0 cmake ninja-build gcc-arm-none-eabi
+            
 
     - name: Checkout Custom Libraries
       run: git clone https://github.com/peterhinch/micropython-fourier.git ./custom_libs
@@ -50,20 +51,28 @@ jobs:
         make BOARD=RPI_PICO_W submodules  # Clonar submódulos específicos para Pico W
         make BOARD=RPI_PICO_W clean  # Limpiar compilaciones anteriores
         make BOARD=RPI_PICO_W  # Compilar para Pico W
-
-    - name: Build MicroPython for ESP32-S3-WROOM-1-N16R8
+    
+    - name: Checkout ESP32-S3 Board Configurations
+      run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
+      
+    - name: Setup ESP-IDF
       run: |
-        git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
         mkdir esp
         cd esp
-        git clone -b v5.2 --recursive https://github.com/espressif/esp-idf.git
+        git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
         cd esp-idf/tools
         python3 idf_tools.py install cmake
         cd ..
         ./install.sh esp32s3
         . ./export.sh
-        cp -r ../ESP32-S3-WROOM-1-N16R8/GENERIC_S3_N16R8 micropython/ports/esp32/boards
-        cd ..
+
+    - name: Copy ESP32-S3 Board Configurations
+      run: |
+        cd
+        cp -r ESP32-S3-WROOM-1-N16R8/GENERIC_S3_N16R8 micropython/ports/esp32/boards
+
+    - name: Build MicroPython for ESP32-S3
+      run: |
         cd micropython
         make -C mpy-cross
         export IDF_TARGET=esp32s3
@@ -76,8 +85,10 @@ jobs:
       run: |
         mkdir -p ./artifacts
         cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/RP2040.uf2
-        cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2  # Copiar firmware a artifacts
-        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/*.bin ./artifacts/  # Copiar los archivos .bin
+        cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2
+        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/bootloader/bootloader.bin ./artifacts/ESP32_bootloader.bin
+        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/partition_table/partition-table.bin ./artifacts/ESP32_partition-table.bin
+        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/micropython.bin ./artifacts/ESP32_micropython.bin
         
     - name: Generate Tag
       id: tag
