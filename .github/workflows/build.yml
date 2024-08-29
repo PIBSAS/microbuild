@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -42,7 +44,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0
-        release_name: "MicroPython Release"
+        name: "MicroPython Release"
         draft: false
         prerelease: false
       env:
