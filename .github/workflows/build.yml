@@ -27,7 +27,13 @@ jobs:
         sudo apt-get install -y build-essential libffi-dev git pkg-config \
             libssl-dev python3 python3-pip python3-venv
         sudo apt-get install -y gcc-arm-none-eabi
-    
+
+    - name: Checkout Custom Libraries
+      run: git clone https://github.com/peterhinch/micropython-fourier.git ./custom_libs
+
+    - name: Copy Libraries
+      run: |
+        cp -r ./custom_libs/* micropython/lib/
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
@@ -45,12 +51,34 @@ jobs:
         make BOARD=RPI_PICO_W clean  # Limpiar compilaciones anteriores
         make BOARD=RPI_PICO_W  # Compilar para Pico W
 
+    - name: Build MicroPython for ESP32-S3-WROOM-1-N16R8
+      run: |
+        git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
+        mkdir esp
+        cd esp
+        git clone -b v5.2 --recursive https://github.com/espressif/esp-idf.git
+        cd esp-idf/tools
+        python3 idf_tools.py install cmake
+        cd ..
+        ./install.sh esp32s3
+        . ./export.sh
+        cp -r ../ESP32-S3-WROOM-1-N16R8/GENERIC_S3_N16R8 micropython/ports/esp32/boards
+        cd ..
+        cd micropython
+        make -C mpy-cross
+        export IDF_TARGET=esp32s3
+        cd ports/esp32/
+        make submodules
+        make BOARD=GENERIC_S3_N16R8 submodules
+        make BOARD=GENERIC_S3_N16R8
+        
     - name: Move .uf2 files to artifacts
       run: |
         mkdir -p ./artifacts
         cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/RP2040.uf2
         cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2  # Copiar firmware a artifacts
-
+        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/*.bin ./artifacts/  # Copiar los archivos .bin
+        
     - name: Generate Tag
       id: tag
       run: echo "TAG_NAME=release-$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
