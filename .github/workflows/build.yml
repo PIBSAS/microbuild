@@ -56,7 +56,7 @@ jobs:
           echo "$HOME/esp/esp-idf/tools" >> $GITHUB_PATH  # Añadir herramientas ESP-IDF al PATH
      
       - name: Export ESP directory path
-        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_ENV
+        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_PATH
         
   build_rp2040:
     runs-on: ubuntu-latest
