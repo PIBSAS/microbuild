@@ -46,7 +46,7 @@ jobs:
     - name: Move .uf2 files to artifacts
       run: |
         mkdir -p ./artifacts
-        cp micropython/ports/rp2/build/*.uf2 ./artifacts/
+        cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/
 
     - name: Create Release
       uses: marvinpinto/action-automatic-releases@latest
