@@ -54,10 +54,21 @@ jobs:
         python3 idf_tools.py install cmake
         cd ..
         ./install.sh esp32s3
-        echo "source $PWD/export.sh" >> $GITHUB_ENV  # Exportar las variables de entorno del ESP-IDF
-        source $GITHUB_ENV  # Cargar las variables de entorno
-
+        echo "source $PWD/export.sh" >> $GITHUB_ENV  # Esto se mantiene para otros pasos
+        echo "IDF_PATH=$PWD/esp-idf" >> $GITHUB_ENV  # Exporta la ruta del ESP-IDF
+        echo "PATH=$IDF_PATH/tools:$PATH" >> $GITHUB_ENV  # Añade herramientas ESP-IDF al PATH
         
+    - name: Build MicroPython for ESP32-S3
+      run: |
+        cd micropython
+        make -C mpy-cross
+        source $HOME/esp/esp-idf/export.sh  # Cargar manualmente el entorno en este paso
+        export IDF_TARGET=esp32s3
+        cd ports/esp32/
+        make submodules
+        make BOARD=GENERIC_S3_N16R8 submodules
+        make BOARD=GENERIC_S3_N16R8
+  
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
@@ -87,14 +98,13 @@ jobs:
         make BOARD=GENERIC_S3_N16R8 submodules
         make BOARD=GENERIC_S3_N16R8
 
-        
     - name: Move .uf2 files to artifacts
       run: |
         mkdir -p ./artifacts
         cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/RP2040.uf2
         cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2
-        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/bootloader/bootloader.bin ./artifacts/ESP32_bootloader.bin
-        cp micropython/ports/esp32/build-GENERIC_S3_N16R8/partition_table/partition-table.bin ./artifacts/ESP32_partition-table.bin
+        cp -r micropython/ports/esp32/build-GENERIC_S3_N16R8/bootloader/bootloader.bin ./artifacts/
+        cp -r micropython/ports/esp32/build-GENERIC_S3_N16R8/partition_table/partition-table.bin ./artifacts/
         cp micropython/ports/esp32/build-GENERIC_S3_N16R8/micropython.bin ./artifacts/ESP32_micropython.bin
         
     - name: Generate Tag
