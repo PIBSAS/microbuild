@@ -48,11 +48,15 @@ jobs:
         mkdir -p ./artifacts
         cp micropython/ports/rp2/build-RPI_PICO/*.uf2 ./artifacts/
 
+    - name: Generate Tag
+      id: tag
+      run: echo "TAG_NAME=release-$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
+
     - name: Create Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
-        automatic_release_tag: "v1.0"  # Asegúrate de que el tag esté definido
-        title: "Release for version v1.0"
+        automatic_release_tag: ${{ env.TAG_NAME }}  # Usa el nombre del tag generado
+        title: "Release for version ${{ env.TAG_NAME }}"
         files: ./artifacts/*
