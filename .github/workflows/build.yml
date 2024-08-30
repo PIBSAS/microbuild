@@ -39,10 +39,10 @@ jobs:
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
-        make V=1 -C mpy-cross
+        make -C mpy-cross
         cd ports/rp2
-        make V=1 submodules
-        make V=1
+        make submodules
+        make
         
     - name: Build MicroPython for Pico W
       run: |
