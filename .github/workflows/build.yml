@@ -33,15 +33,16 @@ jobs:
 
     - name: Copy Libraries
       run: |
-        cp -r ./custom_libs/* micropython/ports/rp2/modules/
+        ls ./custom_libs
+        cp ./custom_libs/*.py micropython/ports/rp2/modules/
     
     - name: Build MicroPython for RP2040
       run: |
         cd micropython
-        make -C mpy-cross
+        make V=1 -C mpy-cross
         cd ports/rp2
-        make submodules
-        make
+        make V=1 submodules
+        make V=1
         
     - name: Build MicroPython for Pico W
       run: |
