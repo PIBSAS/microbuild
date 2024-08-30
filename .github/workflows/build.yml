@@ -131,9 +131,9 @@ jobs:
           export IDF_PATH="$ESP_DIR/esp-idf"  # Ruta del ESP-IDF
           export IDF_TARGET=esp32s3
           cd ports/esp32/
-          make submodules
-          make BOARD=ESP32_GENERIC_S3_N16R8 submodules
-          make BOARD=ESP32_GENERIC_S3_N16R8
+          make V=1 submodules
+          make V=1 BOARD=ESP32_GENERIC_S3_N16R8 submodules
+          make V=1 BOARD=ESP32_GENERIC_S3_N16R8
       
       - name: Move .uf2 files to artifacts
         run: |
