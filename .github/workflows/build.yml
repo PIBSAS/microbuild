@@ -29,7 +29,7 @@ jobs:
         sudo apt-get install -y gcc-arm-none-eabi
 
     - name: Checkout Custom Libraries
-      run: https://github.com/rsc1975/micropython-hcsr04.git ./custom_libs/
+      run: git clone https://github.com/rsc1975/micropython-hcsr04.git ./custom_libs/
 
     - name: Copy Libraries
       run: |
