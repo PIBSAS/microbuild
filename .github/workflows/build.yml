@@ -45,9 +45,8 @@ jobs:
 
       - name: Setup ESP-IDF
         run: |
-          cd
-          mkdir esp
-          cd esp
+          mkdir -p $HOME/esp
+          cd $HOME/esp
           git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
           cd esp-idf/tools
           python3 idf_tools.py install cmake
@@ -56,8 +55,15 @@ jobs:
           echo "$HOME/esp/esp-idf/tools" >> $GITHUB_PATH  # Añadir herramientas ESP-IDF al PATH
      
       - name: Export ESP directory path
-        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_PATH
-        
+        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_ENV  # Exportar la ruta de ESP_DIR
+
+      - name: Setup Python Environment for ESP-IDF
+        run: |
+          cd $ESP_DIR/esp-idf  # Asegurarse de estar en el directorio correcto
+          python3 -m venv esp-idf-venv
+          source esp-idf-venv/bin/activate
+          pip install -r tools/requirements/requirements.core.txt
+          
   build_rp2040:
     runs-on: ubuntu-latest
     needs: setup  # Este trabajo depende del trabajo de configuración
@@ -116,13 +122,6 @@ jobs:
     steps:
       - name: Checkout MicroPython
         run: git clone --recurse-submodules https://github.com/micropython/micropython.git
-
-      - name: Setup Python Environment for ESP-IDF
-        run: |
-          cd esp/esp-idf  # Asegurarse de estar en el directorio correcto
-          python3 -m venv esp-idf-venv
-          source esp-idf-venv/bin/activate
-          pip install -r tools/requirements/requirements.core.txt
 
       - name: Build MicroPython for ESP32-S3
         run: |
