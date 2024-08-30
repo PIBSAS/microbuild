@@ -35,6 +35,7 @@ jobs:
       run: |
         ls ./custom_libs
         cp ./custom_libs/*.py micropython/ports/rp2/modules/
+        rm micropython/ports/rp2/modules/window.py
     
     - name: Build MicroPython for RP2040
       run: |
