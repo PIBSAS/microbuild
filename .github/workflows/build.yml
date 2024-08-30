@@ -35,35 +35,35 @@ jobs:
         run: |
           cp -r ./custom_libs/* micropython/lib/
 
-      - name: Checkout ESP32-S3 Board Configurations
-        run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
+    #  - name: Checkout ESP32-S3 Board Configurations
+     #   run: git clone https://github.com/PIBSAS/ESP32-S3-WROOM-1-N16R8.git
 
-      - name: Copy ESP32-S3 Board Configurations
-        run: |
-          cd ESP32-S3-WROOM-1-N16R8
-          mv GENERIC_S3_N16R8 ESP32_GENERIC
-          cp -r ESP32_GENERIC ./../micropython/ports/esp32/boards/
+    #  - name: Copy ESP32-S3 Board Configurations
+     #   run: |
+      #    cd ESP32-S3-WROOM-1-N16R8
+       #   mv GENERIC_S3_N16R8 ESP32_GENERIC
+        #  cp -r ESP32_GENERIC ./../micropython/ports/esp32/boards/
 
-      - name: Setup ESP-IDF
-        run: |
-          mkdir -p $HOME/esp
-          cd $HOME/esp
-          git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
-          cd esp-idf/tools
-          python3 idf_tools.py install cmake
-          cd ..
-          ./install.sh esp32s3
-          echo "$HOME/esp/esp-idf/tools" >> $GITHUB_PATH  # Añadir herramientas ESP-IDF al PATH
+     # - name: Setup ESP-IDF
+      #  run: |
+     #     mkdir -p $HOME/esp
+      #    cd $HOME/esp
+       #   git clone -b v5.2.2 --recursive https://github.com/espressif/esp-idf.git
+        #  cd esp-idf/tools
+         # python3 idf_tools.py install cmake
+         # cd ..
+         # ./install.sh esp32s3
+         # echo "$HOME/esp/esp-idf/tools" >> $GITHUB_PATH  # Añadir herramientas ESP-IDF al PATH
      
-      - name: Export ESP directory path
-        run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_ENV  # Exportar la ruta de ESP_DIR
+    #  - name: Export ESP directory path
+     #   run: echo "ESP_DIR=$HOME/esp" >> $GITHUB_ENV  # Exportar la ruta de ESP_DIR
 
-      - name: Setup Python Environment for ESP-IDF
-        run: |
-          cd $ESP_DIR/esp-idf  # Asegurarse de estar en el directorio correcto
-          python3 -m venv esp-idf-venv
-          source esp-idf-venv/bin/activate
-          pip install -r tools/requirements/requirements.core.txt
+      #- name: Setup Python Environment for ESP-IDF
+       # run: |
+        #  cd $ESP_DIR/esp-idf  # Asegurarse de estar en el directorio correcto
+         # python3 -m venv esp-idf-venv
+          #source esp-idf-venv/bin/activate
+          #pip install -r tools/requirements/requirements.core.txt
           
   build_rp2040:
     runs-on: ubuntu-latest
@@ -116,35 +116,35 @@ jobs:
           mkdir -p ./artifacts
           cp micropython/ports/rp2/build-RPI_PICO_W/*.uf2 ./artifacts/RP2040W.uf2
 
-  build_esp32_s3:
-    runs-on: ubuntu-latest
-    needs: setup  # Este trabajo depende del trabajo de configuración
+  #build_esp32_s3:
+  #  runs-on: ubuntu-latest
+  #  needs: setup  # Este trabajo depende del trabajo de configuración
 
-    steps:
-      - name: Checkout MicroPython
-        run: git clone --recurse-submodules https://github.com/micropython/micropython.git
+  #  steps:
+  #    - name: Checkout MicroPython
+  #      run: git clone --recurse-submodules https://github.com/micropython/micropython.git
 
-      - name: Build MicroPython for ESP32-S3
-        run: |
-          cd micropython
-          make -C mpy-cross
-          export IDF_PATH="$ESP_DIR/esp-idf"  # Ruta del ESP-IDF
-          export IDF_TARGET=esp32s3
-          cd ports/esp32/
-          make V=1 submodules
-          make V=1 BOARD=ESP32_GENERIC submodules
-          make V=1 BOARD=ESP32_GENERIC
+  #    - name: Build MicroPython for ESP32-S3
+  #      run: |
+  #        cd micropython
+  #        make -C mpy-cross
+  #        export IDF_PATH="$ESP_DIR/esp-idf"  # Ruta del ESP-IDF
+  #        export IDF_TARGET=esp32s3
+  #        cd ports/esp32/
+  #        make V=1 submodules
+  #        make V=1 BOARD=ESP32_GENERIC submodules
+  #        make V=1 BOARD=ESP32_GENERIC
       
-      - name: Move .uf2 files to artifacts
-        run: |
-          mkdir -p ./artifacts
-          cp -r micropython/ports/esp32/build-ESP32_GENERIC/bootloader/bootloader.bin ./artifacts/
-          cp -r micropython/ports/esp32/build-ESP32_GENERIC/partition_table/partition-table.bin ./artifacts/
-          cp micropython/ports/esp32/build-ESP32_GENERIC/micropython.bin ./artifacts/ESP32_micropython.bin
+    #  - name: Move .uf2 files to artifacts
+      #  run: |
+     #     mkdir -p ./artifacts
+  #        cp -r micropython/ports/esp32/build-ESP32_GENERIC/bootloader/bootloader.bin ./artifacts/
+   #       cp -r micropython/ports/esp32/build-ESP32_GENERIC/partition_table/partition-table.bin ./artifacts/
+    #      cp micropython/ports/esp32/build-ESP32_GENERIC/micropython.bin ./artifacts/ESP32_micropython.bin
 
   generate_release:
     runs-on: ubuntu-latest
-    needs: [build_rp2040, build_pico_w, build_esp32_s3]  # Este trabajo depende de las compilaciones
+    needs: [build_rp2040, build_pico_w] #build_esp32_s3]  # Este trabajo depende de las compilaciones
 
     steps:
       - name: Generate Tag
