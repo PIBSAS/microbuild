@@ -29,13 +29,12 @@ jobs:
         sudo apt-get install -y gcc-arm-none-eabi
 
     - name: Checkout Custom Libraries
-      run: git clone https://github.com/peterhinch/micropython-fourier.git ./custom_libs
+      run: https://github.com/rsc1975/micropython-hcsr04.git ./custom_libs/
 
     - name: Copy Libraries
       run: |
         ls ./custom_libs
         cp ./custom_libs/*.py micropython/ports/rp2/modules/
-        rm micropython/ports/rp2/modules/window.py
     
     - name: Build MicroPython for RP2040
       run: |
