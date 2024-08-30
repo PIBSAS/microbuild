@@ -41,8 +41,8 @@ jobs:
       - name: Copy ESP32-S3 Board Configurations
         run: |
           cd ESP32-S3-WROOM-1-N16R8
-          mv GENERIC_S3_N16R8 ESP32_GENERIC_S3_N16R8
-          cp -r ESP32_GENERIC_S3_N16R8 ./../micropython/ports/esp32/boards/
+          mv GENERIC_S3_N16R8 ESP32_GENERIC
+          cp -r ESP32_GENERIC ./../micropython/ports/esp32/boards/
 
       - name: Setup ESP-IDF
         run: |
@@ -132,15 +132,15 @@ jobs:
           export IDF_TARGET=esp32s3
           cd ports/esp32/
           make V=1 submodules
-          make V=1 BOARD=ESP32_GENERIC_S3_N16R8 submodules
-          make V=1 BOARD=ESP32_GENERIC_S3_N16R8
+          make V=1 BOARD=ESP32_GENERIC submodules
+          make V=1 BOARD=ESP32_GENERIC
       
       - name: Move .uf2 files to artifacts
         run: |
           mkdir -p ./artifacts
-          cp micropython/ports/esp32/build-ESP32_GENERIC_S3_N16R8/bootloader/bootloader.bin ./artifacts/
-          cp micropython/ports/esp32/build-ESP32_GENERIC_S3_N16R8/partition_table/partition-table.bin ./artifacts/
-          cp micropython/ports/esp32/build-ESP32_GENERIC_S3_N16R8/micropython.bin ./artifacts/ESP32_micropython.bin
+          cp -r micropython/ports/esp32/build-ESP32_GENERIC/bootloader/bootloader.bin ./artifacts/
+          cp -r micropython/ports/esp32/build-ESP32_GENERIC/partition_table/partition-table.bin ./artifacts/
+          cp micropython/ports/esp32/build-ESP32_GENERIC/micropython.bin ./artifacts/ESP32_micropython.bin
 
   generate_release:
     runs-on: ubuntu-latest
