@@ -8,7 +8,7 @@ on:
     branches:
       - main
     tags:
-      - 'v*'  # Este evento se activará cuando se haga push de un tag que comience con 'v'
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -84,7 +84,15 @@ jobs:
       with:
         tag_name: ${{ env.TAG_NAME }}
         name: "MicroPython for RP2 Release version ${{ env.MPY_VERSION }} (Build ${{ env.TAG_NAME }})"
-        body: "Automated release for MicroPython."
+        body: |
+          Automated release for MicroPython.
+          ## How to Flash the Firmware
+          ### Windows, Linux:
+          1. Download the .uf2 file from the release.
+          2. Press and hold the BOOT button on the RP2040 and press RESET button or connect it to your computer via USB.
+          3. Release the button. The RP2040  will appear as a removable drive.
+          4. Drag and drop the .uf2 file onto the drive.
+          5. The RP2040 will reboot and run MicroPython.
         draft: false
         prerelease: false
         files: ./artifacts/*
