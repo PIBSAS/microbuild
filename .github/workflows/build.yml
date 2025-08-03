@@ -1,4 +1,4 @@
-name: Build MicroPython
+name: Build MicroPython for RP2040 and Pico W
 
 permissions:
   contents: write
