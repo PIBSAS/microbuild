@@ -21,7 +21,7 @@ jobs:
       run: git clone --recurse-submodules https://github.com/micropython/micropython.git
 
     - name: Cache MicroPython builds
-      uses: actions/cache@v4.2.4
+      uses: actions/cache@v4.3.0
       with:
         path: micropython/mpy-cross/mpy-cross
         key: micropython-${{ hashFiles('micropython/py/mpconfig.h') }}
@@ -55,14 +55,6 @@ jobs:
           make BOARD=$board submodules
           make BOARD=$board -j$(nproc)
         done
-      # make BOARD=RPI_PICO submodules
-      #  make BOARD=RPI_PICO -j$(nproc)
-       # make BOARD=RPI_PICO_W submodules
-       # make BOARD=RPI_PICO_W -j$(nproc)
-       # make BOARD=RPI_PICO2 submodules
-       # make BOARD=RPI_PICO2 -j$(nproc)
-       # make BOARD=RPI_PICO2_W submodules
-       # make BOARD=RPI_PICO2_W -j$(nproc)
 
     - name: Move .uf2 files to artifacts
       run: |
